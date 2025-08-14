@@ -1,0 +1,25 @@
+[project]
+name = "pyconmcp"
+version = "0.1.0"
+description = "YouTube MCP Server using PyTube"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pytube>=15.0.0",
+    "mcp>=1.0.0",
+    "requests>=2.32.4",
+    "duckdb>=0.10.0",
+    "loguru>=0.7.0",
+    "yt-dlp>=2023.12.30",
+]
+
+[project.scripts]
+youtube-mcp-server = "mcp_server.youtube_server:main"
+youtube-detail-mcp-server = "mcp_server.youtube_detail_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcp_server"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

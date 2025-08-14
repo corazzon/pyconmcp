@@ -1,0 +1,29 @@
+{
+  "servers": {
+    "youtube-mcp": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "youtube-mcp-server"],
+      "cwd": "/path/to/your/pyconmcp"
+    },
+    "youtube-detail-mcp": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "youtube-detail-mcp-server"],
+      "cwd": "/path/to/your/pyconmcp"
+    },
+    "duckdb": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-duckdb", "--db-path", "/path/to/your/pyconmcp/youtube_videos.db"]
+    },
+    "Github": {
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Log files
+*.log
+
+# Temporary and test files
+demo.py
+test_*.py
+interactive_*.py
+process_*.py
+query_*.py
+query.sql
+
+# Database files (optional - remove if you want to track the database)
+*.db
+
+# MCP configuration with user paths
+.vscode/mcp.json
+
+# IDE and editor files
+.vscode/settings.json
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
