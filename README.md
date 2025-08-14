@@ -76,25 +76,16 @@ cp .vscode/mcp.json.example .vscode/mcp.json
 
 **중요**: `.vscode/mcp.json` 파일에서 `/path/to/your/pyconmcp`를 실제 프로젝트 경로로 변경하세요.
 
-#### macOS/Linux 사용자
-```bash
-# 현재 디렉토리 경로 확인
-pwd
-# 예: /Users/username/pyconmcp
+#### macOS 권한 설정
+1. **시스템 설정** → **개인정보 보호 및 보안** 열기
+2. **파일 및 폴더** 섹션에서 **Claude** 찾기
+3. **필요한 폴더만** 선택적으로 권한 부여:
+   - ✅ **문서 폴더** (프로젝트가 문서 폴더에 있는 경우)
+   - ✅ **다운로드 폴더** (프로젝트가 다운로드 폴더에 있는 경우)
+   - ✅ **데스크탑 폴더** (프로젝트가 데스크탑에 있는 경우)
+   - ✅ **특정 프로젝트 폴더** (필요시)
 
-# mcp.json에서 경로 변경 (예시)
-# "/path/to/your/pyconmcp" → "/Users/username/pyconmcp"
-```
-
-#### Windows 사용자
-```cmd
-# 현재 디렉토리 경로 확인
-cd
-# 예: C:\Users\username\pyconmcp
-
-# mcp.json에서 경로 변경 (예시)
-# "/path/to/your/pyconmcp" → "C:\\Users\\username\\pyconmcp"
-```
+> ⚠️ **보안 주의**: **전체 디스크 접근 권한**은 부여하지 마세요! 필요한 폴더에만 접근 권한을 부여하는 것이 안전합니다.
 
 ### 4. MCP 설정 파일 상세 설명
 
@@ -102,33 +93,27 @@ cd
 
 #### 📝 수정해야 하는 부분
 ```json
+#### 설정 파일 내용 예시:
+```json
 {
   "mcpServers": {
     "youtube-mcp": {
       "command": "uv",
-      "args": [
-        "run",
-        "python",
-        "/path/to/your/pyconmcp/mcp_server/youtube_server.py"  // 👈 이 경로 수정
-      ]
+      "args": ["run", "youtube-mcp-server"],
+      "cwd": "/path/to/your/pyconmcp"
     },
     "youtube-detail-mcp": {
       "command": "uv",
-      "args": [
-        "run", 
-        "python",
-        "/path/to/your/pyconmcp/mcp_server/youtube_detail_server.py"  // 👈 이 경로 수정
-      ]
+      "args": ["run", "youtube-detail-mcp-server"],
+      "cwd": "/path/to/your/pyconmcp"
     },
     "duckdb": {
       "command": "uvx",
-      "args": [
-        "mcp-server-duckdb",
-        "/path/to/your/pyconmcp/youtube_videos.db"  // 👈 이 경로 수정
-      ]
+      "args": ["mcp-server-duckdb", "--db-path", "/path/to/your/pyconmcp/youtube_videos.db"]
     }
   }
 }
+```
 ```
 
 ### 5. VS Code 재시작
