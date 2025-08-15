@@ -25,6 +25,12 @@ logger.add("youtube_detail_mcp.log", rotation="10 MB", level="INFO")
 # Database setup
 DB_PATH = Path("youtube_videos.db")
 
+# 임시 NotificationOptions 클래스 정의
+class NotificationOptions:
+    prompts_changed = None
+    resources_changed = None
+    tools_changed = None
+
 def init_video_details_table():
     """Initialize video details table in DuckDB"""
     conn = duckdb.connect(str(DB_PATH))
@@ -519,7 +525,7 @@ async def main():
                 server_name="youtube-detail-mcp-server",
                 server_version="1.0.0",
                 capabilities=server.get_capabilities(
-                    notification_options=None,
+                    notification_options=NotificationOptions(),
                     experimental_capabilities={},
                 ),
             ),
