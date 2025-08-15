@@ -53,7 +53,7 @@ YouTube 동영상 URL 수집 및 상세 정보 추출을 위한 Model Context Pr
 
 ### 1. 저장소 클론
 ```bash
-git clone <repository-url>
+git clone https://github.com/corazzon/pyconmcp.git
 cd pyconmcp
 ```
 
@@ -69,12 +69,22 @@ uv sync
 ### 3. VS Code MCP 설정 (필수)
 MCP 서버를 VS Code에서 사용하려면 설정 파일을 생성하고 경로를 수정해야 합니다:
 
+#### Windows 설정
+```bash
+# Windows용 예시 설정 파일을 복사
+copy .vscode\mcp.json.windows .vscode\mcp.json
+```
+
+#### macOS/Linux 설정  
 ```bash
 # 예시 설정 파일을 복사
 cp .vscode/mcp.json.example .vscode/mcp.json
 ```
 
-**중요**: `.vscode/mcp.json` 파일에서 `/path/to/your/pyconmcp`를 실제 프로젝트 경로로 변경하세요.
+**중요**: `.vscode/mcp.json` 파일에서 경로를 실제 프로젝트 경로로 변경하세요.
+
+- **Windows**: `C:/path/to/your/pyconmcp-master`
+- **macOS/Linux**: `/path/to/your/pyconmcp`
 
 #### macOS 권한 설정
 1. **시스템 설정** → **개인정보 보호 및 보안** 열기
@@ -89,11 +99,29 @@ cp .vscode/mcp.json.example .vscode/mcp.json
 
 ### 4. MCP 설정 파일 상세 설명
 
-`.vscode/mcp.json` 파일에는 3개의 MCP 서버가 정의되어 있습니다:
+`.vscode/mcp.json` 파일에는 2개의 MCP 서버가 정의되어 있습니다:
 
-#### 📝 수정해야 하는 부분
+#### Windows용 설정 예시:
 ```json
-#### 설정 파일 내용 예시:
+{
+	"servers": {
+		"youtube-mcp": {
+			"type": "stdio",
+			"command": ".venv/Scripts/uv.exe",
+			"args": ["run", "python", "-m", "mcp_server.youtube_server"],
+			"cwd": "C:/your/project/path/pyconmcp-master"
+		},
+		"youtube-detail-mcp": {
+			"type": "stdio",
+			"command": ".venv/Scripts/uv.exe",
+			"args": ["run", "python", "-m", "mcp_server.youtube_detail_server"],
+			"cwd": "C:/your/project/path/pyconmcp-master"
+		}
+	}
+}
+```
+
+#### macOS/Linux용 설정 예시:
 ```json
 {
   "mcpServers": {
@@ -106,15 +134,19 @@ cp .vscode/mcp.json.example .vscode/mcp.json
       "command": "uv",
       "args": ["run", "youtube-detail-mcp-server"],
       "cwd": "/path/to/your/pyconmcp"
-    },
-    "duckdb": {
-      "command": "uvx",
-      "args": ["mcp-server-duckdb", "--db-path", "/path/to/your/pyconmcp/youtube_videos.db"]
     }
   }
 }
 ```
-```
+
+#### 📝 수정해야 하는 부분
+**Windows**:
+- `"cwd": "C:/your/project/path/pyconmcp-master"` → 실제 프로젝트 경로로 변경
+- 예: `"cwd": "C:/Users/YourName/Documents/pyconmcp-master"`
+
+**macOS/Linux**:
+- `"cwd": "/path/to/your/pyconmcp"` → 실제 프로젝트 경로로 변경
+- 예: `"cwd": "/Users/YourName/Documents/pyconmcp"`
 
 ### 5. VS Code 재시작
 설정 완료 후 VS Code를 재시작하여 MCP 서버를 로드하세요.
@@ -133,8 +165,8 @@ VS Code에서 GitHub Copilot Chat을 열고 다음 명령어로 MCP 서버가 �
 # YouTube URL 수집 서버 테스트
 수집된 동영상 URL을 조회해줘
 
-# DuckDB 서버 테스트  
-video_urls 테이블의 데이터를 보여줘
+# YouTube 상세 정보 서버 테스트  
+수집된 영상의 상세 정보를 보여줘
 ```
 
 ### 7. 사용법 및 예제
@@ -224,7 +256,7 @@ uv sync
 ### 빠른 시작 가이드
 1. **저장소 클론 및 설정**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/corazzon/pyconmcp.git
    cd pyconmcp
    uv sync
    cp .vscode/mcp.json.example .vscode/mcp.json
@@ -260,12 +292,12 @@ pyconmcp/
 │   ├── youtube_server.py          # URL 수집 서버
 │   └── youtube_detail_server.py   # 상세 정보 서버
 ├── .vscode/
-│   ├── mcp.json.example          # MCP 서버 설정 예시
+│   ├── mcp.json.example          # MCP 서버 설정 예시 (macOS/Linux)
+│   ├── mcp.json.windows          # MCP 서버 설정 예시 (Windows)
 │   └── mcp.json                  # MCP 서버 설정 (사용자별)
 ├── youtube_videos.db             # DuckDB 데이터베이스 (로컬)
 ├── pyproject.toml                # 프로젝트 설정
 └── README.md                     # 문서
-
 ```
 
 ## 🔧 기술 스택
@@ -281,27 +313,3 @@ pyconmcp/
 ## 📄 라이선스
 
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
-
-## 데이터베이스 스키마
-
-DuckDB 데이터베이스는 다음과 같은 스키마로 동영상 URL을 저장합니다:
-
-```sql
-CREATE TABLE video_urls (
-    id INTEGER PRIMARY KEY,
-    url TEXT UNIQUE,
-    title TEXT,
-    channel_name TEXT,
-    source_type TEXT,  -- 'channel' 또는 'playlist'
-    source_url TEXT,
-    collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
-```
-
-## 의존성
-
-- **pytube**: YouTube 동영상 추출
-- **duckdb**: 로컬 데이터베이스 저장
-- **loguru**: 로깅
-- **mcp**: Model Context Protocol 서버 프레임워크
-
