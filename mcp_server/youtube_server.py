@@ -25,12 +25,21 @@ logger.add("youtube_mcp.log", rotation="10 MB", level="INFO")
 # Database setup
 DB_PATH = Path("youtube_videos.db")
 
+# 임시 NotificationOptions 클래스 정의
+class NotificationOptions:
+    prompts_changed = None
+    resources_changed = None
+    tools_changed = None
+
 def init_database():
     """Initialize DuckDB database with video URLs table"""
     conn = duckdb.connect(str(DB_PATH))
     conn.execute("""
+        CREATE SEQUENCE IF NOT EXISTS video_id_seq START 1;
+    """)
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS video_urls (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY DEFAULT nextval('video_id_seq'),
             url TEXT UNIQUE,
             title TEXT,
             channel_name TEXT,
@@ -291,11 +300,34 @@ async def main():
                 server_name="youtube-mcp-server",
                 server_version="1.0.0",
                 capabilities=server.get_capabilities(
-                    notification_options=None,
+                    notification_options=NotificationOptions(),
                     experimental_capabilities={},
                 ),
             ),
         )
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import sys
+    if len(sys.argv) > 2 and sys.argv[1] == "collect":
+        # 명령줄에서 직접 수집 실행
+        url = sys.argv[2]
+        init_database()
+        
+        try:
+            url_type = identify_youtube_url_type(url)
+            if url_type == "playlist":
+                print(f"플레이리스트에서 비디오 수집 중: {url}")
+                video_data = get_video_urls_from_playlist(url)
+                save_video_urls(video_data)
+                print(f"수집 완료: {len(video_data)}개 비디오")
+            elif url_type == "channel":
+                print(f"채널에서 비디오 수집 중: {url}")
+                video_data = get_video_urls_from_channel(url)
+                save_video_urls(video_data)
+                print(f"수집 완료: {len(video_data)}개 비디오")
+            else:
+                print(f"지원하지 않는 URL 타입: {url_type}")
+        except Exception as e:
+            print(f"수집 중 오류 발생: {e}")
+    else:
+        asyncio.run(main())
