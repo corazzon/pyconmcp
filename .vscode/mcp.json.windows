@@ -1,0 +1,16 @@
+{
+	"servers": {
+		"youtube-mcp": {
+			"type": "stdio",
+			"command": ".venv/Scripts/uv.exe",
+			"args": ["run", "python", "-m", "mcp_server.youtube_server"],
+			"cwd": "C:/path/to/your/pyconmcp-master"
+		},
+		"youtube-detail-mcp": {
+			"type": "stdio",
+			"command": ".venv/Scripts/uv.exe",
+			"args": ["run", "python", "-m", "mcp_server.youtube_detail_server"],
+			"cwd": "C:/path/to/your/pyconmcp-master"
+		}
+	}
+}
